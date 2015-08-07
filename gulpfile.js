@@ -45,6 +45,7 @@ gulp.task('compile-ts', function () {
                        .pipe(sourcemaps.init())
                        .pipe(tsc({
                            target: 'ES5',
+                           module: 'commonjs',
                            declarationFiles: false,
                            noExternalResolve: true
                        }));
