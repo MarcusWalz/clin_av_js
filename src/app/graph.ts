@@ -1,11 +1,12 @@
 /// <reference path="app.d.ts" /> 
 /// <reference path="graph_node.ts" /> 
 
-// TODO Edge data struct
-
 import graph_node  = require('graph_node');
 
-class Edge {
+eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
+
+
+export class Edge {
   private _fr:graph_node.GraphNode;
   private _to:graph_node.GraphNode;
 
@@ -49,61 +50,87 @@ class Edge {
 
 export class Graph {
   private name:string;
-  private nodes:graph_node.GraphNode[] = [];
+  private nodes:collections.Set<graph_node.GraphNode>;
   private edges:collections.Set<Edge>;
 
   constructor(name: string, nodes:graph_node.GraphNode[] = []) {
-    this.name = name;
+    this.name  = name;
     this.edges = new collections.Set<Edge>();
+    this.nodes = new collections.Set<graph_node.GraphNode>(
+        (gn) => { return gn.getName(); } );
 
     nodes.forEach((n) => { this.addNode(n); });
   }
 
+  // create a shallow copy of a graph for topsort
+  private clone() : Graph {
+    var g:Graph = new Graph(this.name);
+
+    this.nodes.forEach((n) => { g.addNode(n); return true; });
+    this.edges.forEach((e) => 
+        { g.addEdge(e.fr(), e.to()); return true; });
+
+    return g;
+  }
 
   getName() : string {
     return this.name;
   }
 
   setName(name: string) {
+
     this.name = name;
+
   }
 
   addNode(node : graph_node.GraphNode) {
-
-    for (var i:number = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].getName() === node.getName()) {
-        throw Error('Node name must be unique');
-      }
+    if (!this.nodes.add(node)) {
+      throw new Error("Node Already Exists in Graph");
     }
-    this.nodes.push(node);
   }
 
+  hasNode(node : graph_node.GraphNode) {
+    return this.nodes.contains(node);
+  }
+/*
   getNode(node_name : string) : graph_node.GraphNode {
-    for (var i:number = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].getName() === node_name) {
-        return this.nodes[i];
+    var nodes = this.nodes.toArray();
+
+    for (var i:number = 0; i < nodes.length; i++) {
+      if (nodes[i].getName() === node_name) {
+        return nodes[i];
       }
     }
     return null;
   }
+*/
 
-  // fails like we want
-  private makeEdge(fr:string, to:string) : Edge {
-    return new Edge(this.getNode(fr), this.getNode(to)) ;
+  // fails if a node d.n.e in graph
+  private makeEdge(fr: graph_node.GraphNode, to:graph_node.GraphNode) : Edge {
+    if(this.nodes.contains(fr) && this.nodes.contains(to)) {
+      return new Edge(fr, to);
+    } else {
+      throw new Error('Edge can not connect to node not in graph');
+    }
+
   }
 
   getNodes() : graph_node.GraphNode[] {
-    return this.nodes;
+    return this.nodes.toArray();
   }
 
-  deleteNode(node_name: string) { 
-    var node = this.getNode(node_name);
-    if (node === null) {
-      throw new Error('Can\'t delete. Node not member of graph');
-    } else { this.nodes.splice(this.nodes.indexOf(node), 1); }
+  deleteNode(node: graph_node.GraphNode) { 
+    if( this.nodes.remove(node)) {
+      this.edges.forEach( (edge:Edge) => {
+        if(edge.to() === node || edge.fr() === node) {
+          this.edges.remove(edge);
+        }
+        return true;
+      });
+    }
   }
 
-  addEdge(fr:string, to:string) {
+  addEdge(fr: graph_node.GraphNode, to: graph_node.GraphNode) {
     this.edges.add(this.makeEdge(fr, to));
   }
 
@@ -112,11 +139,67 @@ export class Graph {
     return this.edges.toArray();
   }
 
-  hasEdge(fr: string, to: string) : boolean {
+  hasEdge(fr: graph_node.GraphNode, to: graph_node.GraphNode) : boolean {
     return this.edges.contains(this.makeEdge(fr,to));
   }
 
-  deleteEdge(fr: string, to: string) {
+
+  getParents(n : graph_node.GraphNode) : graph_node.GraphNode[] {
+    var out = [];
+    this.edges.forEach((edge) => {
+      if(edge.isParentOf(n)) { out.push(edge.to()); }
+      return true;
+    });
+    return out;
+  }
+
+  getChildren(n : graph_node.GraphNode) : graph_node.GraphNode[] {
+    var out = [];
+    this.edges.forEach((edge) => {
+      if(edge.isChildOf(n)) { out.push(edge.to()); }
+      return true;
+    });
+    return out;
+  }
+
+  // topological sort 
+  topSort() : graph_node.GraphNode[] {
+    var sorted = [];
+    var g:Graph = this.clone();
+
+    // the set of all nodes containing no children
+    var s:collections.Set<graph_node.GraphNode> 
+      = new collections.Set<graph_node.GraphNode>(
+        (n) => { return n.getName(); }
+    ); 
+
+    g.getNodes().forEach( (n) =>
+        { if (g.getParents(n).length === 0) {
+            s.add(n); 
+          }
+        });
+
+
+    while(s.size() > 0) {
+      var n = s.toArray()[0];
+      s.remove(n);
+      sorted.push(n);
+      
+      g.getChildren(n).forEach((child) => {
+        g.deleteEdge(n, child);
+        if(g.getParents(child).length === 0) {
+          s.add(child);
+        }
+      });
+    }
+
+    if(g.getEdges().length !== 0) {
+        throw new Error("Can Not TopSort, Graph in Cyclic");
+    }
+    return sorted;
+  }
+
+  deleteEdge(fr: graph_node.GraphNode, to: graph_node.GraphNode) {
     this.edges.remove(this.makeEdge(fr, to));
   }
 }
