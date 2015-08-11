@@ -7,7 +7,7 @@ export class CPT {
 
   private conditions:number; 
   private offsets:number[];
-  private counts:number[][];
+  public  counts:number[][];
   private node:graph_node.GraphNode;
   private parents:graph_node.GraphNode[];
 
@@ -33,7 +33,7 @@ export class CPT {
 
 
     for(var i = 0; i < this.node.ndata.length; i++) {
-      var index = this.lookupIdx(
+      var index = this.index(
         this.parents.map((p) => { return p.ndata[i]; })
       );
 
@@ -55,7 +55,7 @@ export class CPT {
   }
 
   // find the index by taking cross-product of valuess and offset arrays
-  lookupIdx(values: number[]) : number {
+  index(values: number[]) : number {
     var num:number = 0;
 
     for (var i = 0; i < this.parents.length; i++) {
@@ -64,5 +64,33 @@ export class CPT {
 
     return num;
   }
+
+  // inverse of index
+  unindex(id: number) : number[] {
+    var values:number[] = []
+
+    for(var i = 0; i < this.parents.length; i++) {
+      var current_val = Math.floor( id / this.offsets[i] );
+      values.push(current_val);
+      id -= current_val * this.offsets[i];
+    }
+    return values;
+  }
+
+  conditionTable() : string[][] {
+    var table = [];
+
+    for(var i = 0; i < this.conditions; i++) {
+      var indexes = this.unindex(i);
+      var row = [];
+      for(var j = 0; j < indexes.length; j++) {
+        row.push(this.parents[j].getValues()[indexes[j]]);
+      }
+      table.push(row);
+    } 
+
+    return table;
+  }
+
 
 }

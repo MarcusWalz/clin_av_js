@@ -59,6 +59,8 @@ describe('Graph', () => {
     done();
   });
 
+  it('.addNode should require that new node is of equal length');
+
   it('.addNode should throw error when adding duplicate node', (done) => {
     expect(() => { g.addNode(gn3); }).to.throw( Error);
     done();

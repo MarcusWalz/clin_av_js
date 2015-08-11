@@ -11,7 +11,7 @@ export class GraphNode {
   private missingVal:number = null;
 
   // the column stored as the index in the value array
-  private ndata:number[];
+  public ndata:number[];
 
   constructor(name: string, column: string[]) {
 
@@ -28,6 +28,14 @@ export class GraphNode {
       // store the value
       this.ndata[i] = valueIdx;
     }
+
+
+    if(this.values.length <= 1) {
+      throw new Error(
+          "Column " + name + " must have at least two differing values"
+      ); 
+    }
+
   }
 
   getName() : string {
@@ -50,6 +58,10 @@ export class GraphNode {
       }
     }
     return vals;
+  }
+
+  getValue(i : number) : string {
+    return this.values[i];
   }
 
   // returns the value at the nth row

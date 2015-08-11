@@ -66,4 +66,5 @@ describe('Graph Node', () => {
           ).to.throw(RangeError);
       done();
     });
+
 });

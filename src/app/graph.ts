@@ -1,7 +1,9 @@
 /// <reference path="app.d.ts" /> 
 /// <reference path="graph_node.ts" /> 
+/// <reference path="cpt.ts" /> 
 
-import graph_node  = require('graph_node');
+import graph_node = require('graph_node');
+import cpt        = require('./cpt');
 
 eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
 
@@ -141,6 +143,10 @@ export class Graph {
 
   hasEdge(fr: graph_node.GraphNode, to: graph_node.GraphNode) : boolean {
     return this.edges.contains(this.makeEdge(fr,to));
+  }
+
+  calculateCpt(node: graph_node.GraphNode) : cpt.CPT {
+    return new cpt.CPT(node, this.getParents(node));
   }
 
 
