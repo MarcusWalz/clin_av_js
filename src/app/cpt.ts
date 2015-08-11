@@ -18,8 +18,9 @@ export class CPT {
     this.parents = parents;
     this.offsets = this.calc_offsets();
     // number of conditions = product of value lengths
-    this.conditions = parents.map((p) => p.getValues().length)
-                             .reduce((a,b) => a*b, 1);
+    this.conditions = parents.map( (p) => { 
+      return p.getValues().length; }).reduce( (a, b) => { 
+        return a * b; }, 1);
     this.counts = new Array(this.conditions);
     
     var base_arr = new Array(node.getValues().length); 
@@ -32,7 +33,7 @@ export class CPT {
     }
 
 
-    for(var i = 0; i < this.node.ndata.length; i++) {
+    for (var i = 0; i < this.node.ndata.length; i++) {
       var index = this.index(
         this.parents.map((p) => { return p.ndata[i]; })
       );
@@ -67,9 +68,9 @@ export class CPT {
 
   // inverse of index
   unindex(id: number) : number[] {
-    var values:number[] = []
+    var values:number[] = [];
 
-    for(var i = 0; i < this.parents.length; i++) {
+    for (var i = 0; i < this.parents.length; i++) {
       var current_val = Math.floor( id / this.offsets[i] );
       values.push(current_val);
       id -= current_val * this.offsets[i];
@@ -80,10 +81,10 @@ export class CPT {
   conditionTable() : string[][] {
     var table = [];
 
-    for(var i = 0; i < this.conditions; i++) {
+    for (var i = 0; i < this.conditions; i++) {
       var indexes = this.unindex(i);
       var row = [];
-      for(var j = 0; j < indexes.length; j++) {
+      for (var j = 0; j < indexes.length; j++) {
         row.push(this.parents[j].getValues()[indexes[j]]);
       }
       table.push(row);

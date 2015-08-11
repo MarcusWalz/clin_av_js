@@ -10,7 +10,7 @@ import graph_node  = require('../graph_node');
 import graph       = require('../graph');
 
 // fuck node
-eval(require('fs').readFileSync('../aux_scripts/all.js', 'utf8'));
+// eval(require('fs').readFileSync('../aux_scripts/all.js', 'utf8'));
 //console.log(collections);
 
 
@@ -92,7 +92,7 @@ describe('Graph', () => {
 
   it('.addEdge should create a new edge', (done) => {
     g.addEdge(gn1, gn2);
-    expect(g.getEdges()).to.be.eql( [new graph.Edge(gn1,gn2)]);
+    expect(g.getEdges()).to.be.eql([new graph.Edge(gn1, gn2)]);
     expect(g.hasEdge(gn1, gn2)).to.be.true;
     done();
   });
@@ -136,12 +136,12 @@ describe('Graph', () => {
   });
 
   it('.topSort should work in a complicated graph', (done) => {
-    var g = new graph.Graph("complicated", [gn1,gn2,gn3,gn4,gn5])
-    g.addEdge(gn1,gn2);
-    g.addEdge(gn1,gn3);
-    g.addEdge(gn2,gn4);
-    g.addEdge(gn3,gn4);
-    g.addEdge(gn4,gn5);
+    var g = new graph.Graph('complicated', [gn1, gn2, gn3, gn4, gn5]);
+    g.addEdge(gn1, gn2);
+    g.addEdge(gn1, gn3);
+    g.addEdge(gn2, gn4);
+    g.addEdge(gn3, gn4);
+    g.addEdge(gn4, gn5);
 
     var sort = g.topSort();
 

@@ -28,8 +28,8 @@ describe('CPT', () => {
   var gn2 = new graph_node.GraphNode('N2', col2);
   var gn3 = new graph_node.GraphNode('N3', col3);
 
-  console.log(new cpt.CPT(gn1, [gn2,gn3]));
-  console.log(new cpt.CPT(gn1, [gn2,gn3]).conditionTable());
+  console.log(new cpt.CPT(gn1, [gn2, gn3]));
+  console.log(new cpt.CPT(gn1, [gn2, gn3]).conditionTable());
 
   it('Should work withouot parents');
   it('should work with only 1 condition', (done) => {
@@ -38,19 +38,19 @@ describe('CPT', () => {
   });
 
   it('sum of counts should be eq. number of data points', (done) => {
-    var c = new cpt.CPT(gn1, [gn2,gn3]); 
+    var c = new cpt.CPT(gn1, [gn2, gn3]); 
 
     var flat = [];
     flat = flat.concat.apply([], c.counts);
-    var entries = flat.reduce( (a,b) => { return a+b; } );
+    var entries = flat.reduce( (a, b) => { return a + b; } );
     expect(entries).to.be.equal(gn1.length());
     done();
 
   });
 
   it('index and unindex should be inverses', (done) => {
-    var c = new cpt.CPT(gn1, [gn2,gn3]); 
-    for(var i=0; i < 6; i++) {
+    var c = new cpt.CPT(gn1, [gn2, gn3]); 
+    for (var i = 0; i < 6; i++) {
       expect(c.index(c.unindex(i))).to.equal(i);
     }
     done();

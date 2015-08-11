@@ -13,11 +13,11 @@ export class Edge {
   private _to:graph_node.GraphNode;
 
   constructor(fr:graph_node.GraphNode, to:graph_node.GraphNode) {
-    if(fr === null || to === null) {
-      throw new Error("Can not construct edge to null node");
+    if (fr === null || to === null) {
+      throw new Error('Can not construct edge to null node');
     }
-    if(fr === to) {
-      throw new Error("Edge cannot connect a node to itself");
+    if (fr === to) {
+      throw new Error('Edge cannot connect a node onto itself');
     }
 
     this._to = to;
@@ -69,8 +69,8 @@ export class Graph {
     var g:Graph = new Graph(this.name);
 
     this.nodes.forEach((n) => { g.addNode(n); return true; });
-    this.edges.forEach((e) => 
-        { g.addEdge(e.fr(), e.to()); return true; });
+    this.edges.forEach((e) => { 
+      g.addEdge(e.fr(), e.to()); return true; });
 
     return g;
   }
@@ -87,7 +87,7 @@ export class Graph {
 
   addNode(node : graph_node.GraphNode) {
     if (!this.nodes.add(node)) {
-      throw new Error("Node Already Exists in Graph");
+      throw new Error('Node Already Exists in Graph');
     }
   }
 
@@ -109,7 +109,7 @@ export class Graph {
 
   // fails if a node d.n.e in graph
   private makeEdge(fr: graph_node.GraphNode, to:graph_node.GraphNode) : Edge {
-    if(this.nodes.contains(fr) && this.nodes.contains(to)) {
+    if (this.nodes.contains(fr) && this.nodes.contains(to)) {
       return new Edge(fr, to);
     } else {
       throw new Error('Edge can not connect to node not in graph');
@@ -122,9 +122,9 @@ export class Graph {
   }
 
   deleteNode(node: graph_node.GraphNode) { 
-    if( this.nodes.remove(node)) {
+    if (this.nodes.remove(node)) {
       this.edges.forEach( (edge:Edge) => {
-        if(edge.to() === node || edge.fr() === node) {
+        if (edge.to() === node || edge.fr() === node) {
           this.edges.remove(edge);
         }
         return true;
@@ -142,7 +142,7 @@ export class Graph {
   }
 
   hasEdge(fr: graph_node.GraphNode, to: graph_node.GraphNode) : boolean {
-    return this.edges.contains(this.makeEdge(fr,to));
+    return this.edges.contains(this.makeEdge(fr, to));
   }
 
   calculateCpt(node: graph_node.GraphNode) : cpt.CPT {
@@ -153,7 +153,7 @@ export class Graph {
   getParents(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
     this.edges.forEach((edge) => {
-      if(edge.isParentOf(n)) { out.push(edge.to()); }
+      if (edge.isParentOf(n)) { out.push(edge.to()); }
       return true;
     });
     return out;
@@ -162,7 +162,7 @@ export class Graph {
   getChildren(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
     this.edges.forEach((edge) => {
-      if(edge.isChildOf(n)) { out.push(edge.to()); }
+      if (edge.isChildOf(n)) { out.push(edge.to()); }
       return true;
     });
     return out;
@@ -179,28 +179,28 @@ export class Graph {
         (n) => { return n.getName(); }
     ); 
 
-    g.getNodes().forEach( (n) =>
-        { if (g.getParents(n).length === 0) {
+    g.getNodes().forEach( (n) => { 
+      if (g.getParents(n).length === 0) {
             s.add(n); 
-          }
-        });
+      }
+    });
 
 
-    while(s.size() > 0) {
+    while (s.size() > 0) {
       var n = s.toArray()[0];
       s.remove(n);
       sorted.push(n);
       
       g.getChildren(n).forEach((child) => {
         g.deleteEdge(n, child);
-        if(g.getParents(child).length === 0) {
+        if (g.getParents(child).length === 0) {
           s.add(child);
         }
       });
     }
 
-    if(g.getEdges().length !== 0) {
-        throw new Error("Can Not TopSort, Graph in Cyclic");
+    if (g.getEdges().length !== 0) {
+        throw new Error('Can Not TopSort, Graph in Cyclic');
     }
     return sorted;
   }

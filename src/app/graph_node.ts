@@ -30,9 +30,9 @@ export class GraphNode {
     }
 
 
-    if(this.values.length <= 1) {
+    if (this.values.length <= 1) {
       throw new Error(
-          "Column " + name + " must have at least two differing values"
+         'Column ' + name + ' must have at least two differing values'
       ); 
     }
 
