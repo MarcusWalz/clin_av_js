@@ -10,7 +10,7 @@ import graph = require('./graph');
 fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => { 
   if (err) { throw err; };
 
-  p = Baby.parse(dat, {header: true, delimiter: ' '});  
+  var p = Baby.parse(dat, {header: true, delimiter: ' '});  
 
   var hash = {};
   p.meta.fields.forEach((f) => { hash[f] = []; });
@@ -21,7 +21,7 @@ fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => {
   });
   console.log(hash);
 
-  g = new graph.Graph('hello world');
+  var g = new graph.Graph('hello world');
   for (var field in hash) { 
     g.addNode(new graph_node.GraphNode(field, hash[field]));
   }
@@ -33,4 +33,4 @@ fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => {
 
   console.log(g);
   console.log(g.calculateCpt(nodes[3]));
-);
+});

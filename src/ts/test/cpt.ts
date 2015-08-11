@@ -31,9 +31,11 @@ describe('CPT', () => {
   console.log(new cpt.CPT(gn1, [gn2, gn3]));
   console.log(new cpt.CPT(gn1, [gn2, gn3]).conditionTable());
 
-  it('Should work withouot parents');
+  it('Should work without parents'), (done) => {
+
+  });
   it('should work with only 1 condition', (done) => {
-    c = new cpt.CPT(gn1, [gn2]);
+    var c = new cpt.CPT(gn1, [gn2]);
     done();
   });
 

@@ -24,6 +24,7 @@ export class CPT {
     this.counts = new Array(this.conditions);
     
     var base_arr = new Array(node.getValues().length); 
+
     for (var i = 0; i < base_arr.length; i++) {
       base_arr[i] = 0; 
     }
@@ -45,6 +46,7 @@ export class CPT {
 
   // contstruct array for lookup function
   private calc_offsets ( ) : number[] {
+    var t  
     var offset = new Array(this.parents.length);
     for (var i = 0 ; i < this.parents.length; i++) {
       offset[i] = 1;
