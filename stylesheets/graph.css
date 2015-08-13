@@ -1,0 +1,14 @@
+body {
+  font-family: sans;
+  background: #EEE;
+}
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 3px;
+}
+
+circle {
+  fill: #FFF;
+}
