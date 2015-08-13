@@ -1,5 +1,5 @@
 require.config({
   paths: {
-    d3: '/out/lib/d3',
+    d3: '/lib/d3',
   },
 });

@@ -10,7 +10,7 @@ var gulp = require('gulp'),
     Config = require('./gulpfile.config'),
     exec = require('child_process'),
     compass = require('gulp-compass'),
-    webserver = require('gulp-webserver');
+    browserSync = require('browser-sync').create();
 
 var config = new Config();
 
@@ -87,13 +87,13 @@ gulp.task('compass', function() {
 });
 
 gulp.task('webserver', function() {
-    gulp.src('./')
-      .pipe(webserver({
-        host: '0.0.0.0',
-      livereload: true,
-      directoryListing: true
-    }));
-  });
+  browserSync.init({
+    server: { baseDir: './out',
+              host: '0.0.0.0' }
+    });
+
+//  gulp.watch('./out/**/*').on('change', browserSync.reload);
+});
 
 gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs', 'compass', 'webserver', 'watch']);
 

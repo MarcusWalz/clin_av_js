@@ -1,7 +1,7 @@
 require.config({
   paths: {
-    mocha: '/out/lib/mocha',
-    chai: '/out/lib/chai'
+    mocha: '/lib/mocha',
+    chai: '/lib/chai'
   },
   shim: {
     mocha: { init: () => { 
