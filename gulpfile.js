@@ -92,7 +92,7 @@ gulp.task('webserver', function() {
               host: '0.0.0.0' }
     });
 
-  gulp.watch('out').on('change', browserSync.reload);
+  gulp.watch('out/**/*').on('change', browserSync.reload);
 });
 
 gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs', 'compass', 'webserver', 'watch']);
