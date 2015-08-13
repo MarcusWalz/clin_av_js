@@ -1,9 +1,7 @@
-/// <reference path="../app.d.ts" />
+/// <reference path="test.d.ts" />
 /// <reference path="../graph_node.ts" />
 /// <reference path="../graph.ts" />
 /// <reference path="../cpt.ts" />
-/// <reference path="../../../tools/typings/mocha/mocha.d.ts" />
-/// <reference path="../../../tools/typings/chai/chai.d.ts" />
 
 
 import chai        = require('chai');

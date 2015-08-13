@@ -1,1 +1,1 @@
-/// <reference path="../../tools/typings/collections/collections.d.ts" />
+/// <reference path="../typings/collections/collections.d.ts" />
