@@ -11,7 +11,7 @@ import graph = require('./graph');
 
 function showGraph(g : graph.Graph ) {
   var width = 960
-    , height = 500;
+    , height = 700;
 
   color = d3.scale.category20();
 
@@ -24,7 +24,7 @@ function showGraph(g : graph.Graph ) {
     .nodes(g.getNodes())
     .links(links)
     .charge(-3000)
-//    .linkDistance(60)
+    .linkDistance(200)
     .on('tick', tick)
     .size([width,height])
     .start();
@@ -60,12 +60,34 @@ function showGraph(g : graph.Graph ) {
       .attr('class', 'node')
       .call(force.drag);
 
-  var circs = node.append('circle')
-    .attr('r', 30);
+   var pie = d3.layout.pie()
+    .sort(null);
 
+   var color = d3.scale.category20();
+
+   var arc = d3.svg.arc()
+    .innerRadius(50)
+    .outerRadius(60);
+
+  node.selectAll("path")
+    .data((d,i) => { return pie(d.histogram()); } ) 
+    .enter()
+      .append('svg:path')
+      .attr('d', arc)
+      .attr('fill', (d,i) { return color(i) });
+  node.append('circle')
+    .attr('r', 50);
+
+
+
+
+
+
+  console.log(node);
   node.append('text')
-    .attr('x', 12)
-    .attr('dy', '.35em')
+//    .attr('x', '50%') 
+//    .attr('y', '50%')
+    .attr('text-anchor', 'middle')
     .text((n) => { return n.getName(); }); 
 
 
@@ -110,6 +132,7 @@ function genGraph(p:papaparse.ParseResult) {
   g.addEdge(nodes[1], nodes[3]);
   g.addEdge(nodes[2], nodes[3]);
 
+  nodes.forEach((n) => { console.log(n.histogram()); return true; })
   console.log(g);
   console.log(g.calculateCpt(nodes[3]));
   showGraph(g);

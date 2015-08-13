@@ -94,4 +94,12 @@ export class GraphNode {
   getColumn() : Array<string> {
     return this.ndata.map( (index) => { return this.values[index]; } );
   }
+
+  // return the node as a histogram
+  histogram() {
+    var base_hist = this.values.map( (i) => { return 0 });
+    
+    this.ndata.forEach( (i) => { base_hist[i]++; return true; });
+
+    return base_hist;
 }

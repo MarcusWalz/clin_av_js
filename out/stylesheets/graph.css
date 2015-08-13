@@ -1,3 +1,8 @@
+body {
+  font-family: sans;
+  background: #EEE;
+}
+
 path.link {
   fill: none;
   stroke: #666;
@@ -6,6 +11,4 @@ path.link {
 
 circle {
   fill: #FFF;
-  stroke: #000;
-  stroke-width: 3px;
 }
