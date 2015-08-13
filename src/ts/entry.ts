@@ -1,17 +1,97 @@
+/// <reference path="../../typings/papaparse/papaparse.d.ts" />
+/// <reference path="../../typings/d3/d3.d.ts" />
 /// <reference path="graph_node.ts" /> 
 /// <reference path="graph.ts" /> 
 
-import papa = require('papaparse');
-
+import papaparse  = require('papaparse');
+import d3 = require('d3');
 import graph_node = require('./graph_node');
 import graph = require('./graph');
 
-/*
-fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => { 
-  if (err) { throw err; };
 
-  var p = Baby.parse(dat, {header: true, delimiter: ' '});  
+function showGraph(g : graph.Graph ) {
+  var width = 960
+    , height = 500;
 
+  color = d3.scale.category20();
+
+  var links = g.getEdges().map( (edge) => 
+      { return { source: edge.fr()
+               , target: edge.to()
+               } } );
+
+  var force = d3.layout.force()
+    .nodes(g.getNodes())
+    .links(links)
+    .charge(-3000)
+//    .linkDistance(60)
+    .on('tick', tick)
+    .size([width,height])
+    .start();
+
+  var svg = d3.select('body').append('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+  // build the arrow.
+  svg.append("svg:defs").selectAll("marker")
+      .data(["end"])      // Different link/path types can be defined here
+    .enter().append("svg:marker")    // This section adds in the arrows
+      .attr("id", String)
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+
+  var path = svg.append('svg:g').selectAll("path")
+    .data(force.links())
+    .enter().append('svg:path')
+      .attr('class', 'link');
+
+
+
+  var node = svg.selectAll('.node')
+    .data(force.nodes())
+    .enter().append('g')
+      .attr('class', 'node')
+      .call(force.drag);
+
+  var circs = node.append('circle')
+    .attr('r', 30);
+
+  node.append('text')
+    .attr('x', 12)
+    .attr('dy', '.35em')
+    .text((n) => { return n.getName(); }); 
+
+
+
+// add the curvy lines
+function tick() {
+    path.attr("d", function(d) {
+        var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + 
+            d.source.x + "," + 
+            d.source.y + "A" + 
+            dr + "," + dr + " 0 0,1 " + 
+            d.target.x + "," + 
+            d.target.y;
+    });
+
+    node
+        .attr("transform", function(d) { 
+  	    return "translate(" + d.x + "," + d.y + ")"; });
+}
+
+}
+
+function genGraph(p:papaparse.ParseResult) {
   var hash = {};
   p.meta.fields.forEach((f) => { hash[f] = []; });
   p.data.forEach((row) => {
@@ -19,13 +99,12 @@ fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => {
       hash[field].push(row[field]);
     }
   });
-  console.log(hash);
 
   var g = new graph.Graph('hello world');
   for (var field in hash) { 
     g.addNode(new graph_node.GraphNode(field, hash[field]));
   }
-  
+
   var nodes = g.getNodes();
   g.addEdge(nodes[0], nodes[3]);
   g.addEdge(nodes[1], nodes[3]);
@@ -33,5 +112,19 @@ fs.readFile('/home/mewalz/sample.tab', 'utf8', (err, dat) => {
 
   console.log(g);
   console.log(g.calculateCpt(nodes[3]));
-});
-*/
+  showGraph(g);
+
+}
+
+papaparse.parse('/sample.tab', {
+  header: true,
+  download: true,
+  worker: false,
+  complete:(p, err) => { 
+    if(err) { alert(err); }
+    else { genGraph(p); }  
+  },
+  delimiter: ' '}
+);
+
+
