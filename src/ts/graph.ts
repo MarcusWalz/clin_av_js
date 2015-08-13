@@ -5,7 +5,7 @@
 import graph_node = require('graph_node');
 import cpt        = require('./cpt');
 
-eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
+// eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
 
 
 export class Edge {

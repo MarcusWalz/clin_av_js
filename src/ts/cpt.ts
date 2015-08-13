@@ -3,7 +3,7 @@
 
 import graph_node = require('graph_node');
 
-export class CPT {
+export class CPT implements ICPT {
 
   private conditions:number; 
   private offsets:number[];

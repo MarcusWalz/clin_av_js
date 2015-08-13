@@ -7,7 +7,10 @@ var gulp = require('gulp'),
     tslint = require('gulp-tslint'),
     sourcemaps = require('gulp-sourcemaps'),
     del = require('del'),
-    Config = require('./gulpfile.config');
+    Config = require('./gulpfile.config'),
+    exec = require('child_process'),
+    compass = require('gulp-compass'),
+    webserver = require('gulp-webserver');
 
 var config = new Config();
 
@@ -37,23 +40,23 @@ gulp.task('ts-lint', function () {
  * Compile TypeScript and include references to library and app .d.ts files.
  */
 gulp.task('compile-ts', function () {
-    var sourceTsFiles = [config.allTypeScript,                //path to typescript files
-                         config.libraryTypeScriptDefinitions, //reference to library .d.ts files
-                         config.appTypeScriptReferences];     //reference to app.d.ts files
+    var sourceTsFiles = ['src/ts/**/*.ts'];                //path to typescript files
+                       //  config.libraryTypeScriptDefinitions, //reference to library .d.ts files
+                       //  config.appTypeScriptReferences];     //reference to app.d.ts files
 
     var tsResult = gulp.src(sourceTsFiles)
                        .pipe(sourcemaps.init())
                        .pipe(tsc({
                            target: 'ES5',
-                           module: 'commonjs',
+                           module: 'AMD',
                            declarationFiles: false,
                            noExternalResolve: true
                        }));
 
-        tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
+        tsResult.dts.pipe(gulp.dest('out/js'));
         return tsResult.js
                         .pipe(sourcemaps.write('.'))
-                        .pipe(gulp.dest(config.tsOutputPath));
+                        .pipe(gulp.dest('out/js'));
 });
 
 /**
@@ -69,9 +72,28 @@ gulp.task('clean-ts', function (cb) {
   del(typeScriptGenFiles, cb);
 });
 
+
 gulp.task('watch', function() {
-    gulp.watch([config.allTypeScript], ['ts-lint', 'compile-ts', 'gen-ts-refs']);
+    gulp.watch([config.allTypeScript], ['ts-lint', 'compile-ts', 'gen-ts-refs', 'compass']);
 });
 
-gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs', 'watch']);
+gulp.task('compass', function() {
+    gulp.src('./src/scss/**/*.scss')
+      .pipe(compass( { 
+        config_file: './config.rb',
+        css: 'out/stylesheets',
+        sass: 'src/scss'
+      }));
+});
+
+gulp.task('webserver', function() {
+    gulp.src('./')
+      .pipe(webserver({
+        host: '0.0.0.0',
+      livereload: true,
+      directoryListing: true
+    }));
+  });
+
+gulp.task('default', ['ts-lint', 'compile-ts', 'gen-ts-refs', 'compass', 'webserver', 'watch']);
 
