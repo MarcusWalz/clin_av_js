@@ -1,6 +1,9 @@
 require.config({
   paths: {
-    d3:        '/lib/d3',
-    papaparse: '/lib/papaparse'
-  },
+    angular:   '../lib/angular',
+    d3:        '../lib/d3',
+    papaparse: '../lib/papaparse'
+  }, shim: {
+    'angular': { exports: 'angular' }
+  }
 });

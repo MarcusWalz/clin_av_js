@@ -70,17 +70,13 @@ function showGraph(g : graph.Graph ) {
     .outerRadius(60);
 
   node.selectAll("path")
-    .data((d,i) => { return pie(d.histogram()); } ) 
+    .data((d,i) => pie(d.histogram())) 
     .enter()
       .append('svg:path')
       .attr('d', arc)
-      .attr('fill', (d,i) { return color(i) });
+      .attr('fill', (d,i) => color(i) );
   node.append('circle')
     .attr('r', 50);
-
-
-
-
 
 
   console.log(node);
@@ -88,7 +84,7 @@ function showGraph(g : graph.Graph ) {
 //    .attr('x', '50%') 
 //    .attr('y', '50%')
     .attr('text-anchor', 'middle')
-    .text((n) => { return n.getName(); }); 
+    .text((n:graph_node.GraphNode) => n.getName()); 
 
 
 
@@ -113,7 +109,7 @@ function tick() {
 
 }
 
-function genGraph(p:papaparse.ParseResult) {
+function genGraph(p) { // parseresult not include in typing
   var hash = {};
   p.meta.fields.forEach((f) => { hash[f] = []; });
   p.data.forEach((row) => {
@@ -131,6 +127,8 @@ function genGraph(p:papaparse.ParseResult) {
   g.addEdge(nodes[0], nodes[3]);
   g.addEdge(nodes[1], nodes[3]);
   g.addEdge(nodes[2], nodes[3]);
+  g.addEdge(nodes[1], nodes[4]);
+  g.addEdge(nodes[3], nodes[2]);
 
   nodes.forEach((n) => { console.log(n.histogram()); return true; })
   console.log(g);

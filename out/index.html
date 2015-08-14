@@ -1,12 +1,26 @@
-<html>
+<html ng-app="todomvc">
 <head>
   <meta charset="utf-8">
   <title>Clinical Avatars</title>
-  <link rel="stylesheet" type="text/css" href="/stylesheets/graph.css"></link>
+  <link rel="stylesheet" type="text/css" href="stylesheets/graph.css"></link>
 </head>
 <body>
+  <section class="todoapp" ng-controller="todoCtrl">
+    <form class="todo-form" ng-submit="vm.addTodo()">
+      <input class="new-todo" placeholder="placeholder" ng-model="newTodo">
+    </form>
+  <li ng-repeat="todo in todos">
+      <input class="toggle" type="checkbox", ng-model="todo.done"> 
+      <label>{{todo.text}}</label>
+    </li>
+  </section>
   <script src="lib/collections.js"></script>
+  <!--
+  <script src="lib/angular.js"></script>
   <script data-main="js/entry" src="lib/require.js"></script>
+  <script src="js/todomvc.js"></script>
+  -->
+  <script data-main="js/todomvc" src="lib/require.js"></script>
   <script src="js/config.js"></script>
 </body>
 </html>

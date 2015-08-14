@@ -2,50 +2,38 @@
 /// <reference path="graph_node.ts" /> 
 /// <reference path="cpt.ts" /> 
 
-import graph_node = require('graph_node');
-import cpt        = require('./cpt');
+import graph_node   = require('graph_node');
+import cpt          = require('cpt');
 
 // eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
 
-
 export class Edge {
-  private _fr:graph_node.GraphNode;
-  private _to:graph_node.GraphNode;
 
-  constructor(fr:graph_node.GraphNode, to:graph_node.GraphNode) {
-    if (fr === null || to === null) {
+  constructor(
+      public source:graph_node.GraphNode,
+      public target:graph_node.GraphNode) {
+    if (source === null || target === null) {
       throw new Error('Can not construct edge to null node');
     }
-    if (fr === to) {
+    if (source === target) {
       throw new Error('Edge cannot connect a node onto itself');
     }
-
-    this._to = to;
-    this._fr = fr;
-  }
-
-  fr(): graph_node.GraphNode {
-    return this._fr;
-  }
-
-  to() : graph_node.GraphNode {
-    return this._to;
   }
 
   toString() : string {
-    return this._fr.getName() + '->' + this._to.getName();
+    return this.source.getName() + '->' + this.target.getName();
   }
 
   isEqual(a:Edge):boolean {
-    return a.fr() === this._fr && a.to() === this._to;
+    return a.source === this.source && a.target === this.target;
   }
 
   isParentOf(child:graph_node.GraphNode) : boolean {
-    return child === this._to;
+    return child === this.target;
   }
 
   isChildOf(parent:graph_node.GraphNode) : boolean {
-    return parent === this._fr;
+    return parent === this.source;
   }
 
 }
@@ -70,7 +58,7 @@ export class Graph {
 
     this.nodes.forEach((n) => { g.addNode(n); return true; });
     this.edges.forEach((e) => { 
-      g.addEdge(e.fr(), e.to()); return true; });
+      g.addEdge(e.source, e.target); return true; });
 
     return g;
   }
@@ -124,7 +112,7 @@ export class Graph {
   deleteNode(node: graph_node.GraphNode) { 
     if (this.nodes.remove(node)) {
       this.edges.forEach( (edge:Edge) => {
-        if (edge.to() === node || edge.fr() === node) {
+        if (edge.target === node || edge.source === node) {
           this.edges.remove(edge);
         }
         return true;
@@ -153,7 +141,7 @@ export class Graph {
   getParents(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
     this.edges.forEach((edge) => {
-      if (edge.isParentOf(n)) { out.push(edge.to()); }
+      if (edge.isParentOf(n)) { out.push(edge.target); }
       return true;
     });
     return out;
@@ -162,7 +150,7 @@ export class Graph {
   getChildren(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
     this.edges.forEach((edge) => {
-      if (edge.isChildOf(n)) { out.push(edge.to()); }
+      if (edge.isChildOf(n)) { out.push(edge.target); }
       return true;
     });
     return out;
