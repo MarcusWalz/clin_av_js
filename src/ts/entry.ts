@@ -131,6 +131,8 @@ function genGraph(p:papaparse.ParseResult) {
   g.addEdge(nodes[0], nodes[3]);
   g.addEdge(nodes[1], nodes[3]);
   g.addEdge(nodes[2], nodes[3]);
+  g.addEdge(nodes[1], nodes[4]);
+  g.addEdge(nodes[3], nodes[2]);
 
   nodes.forEach((n) => { console.log(n.histogram()); return true; })
   console.log(g);

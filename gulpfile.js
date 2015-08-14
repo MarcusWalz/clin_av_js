@@ -74,7 +74,9 @@ gulp.task('clean-ts', function (cb) {
 
 
 gulp.task('watch', function() {
-    gulp.watch([config.allTypeScript], ['ts-lint', 'compile-ts', 'gen-ts-refs', 'compass']);
+    gulp.watch([config.allTypeScript], 
+      ['ts-lint', 'compile-ts', 'gen-ts-refs']);
+    gulp.watch('./src/scss/**/*.scss', ['compass']);
 });
 
 gulp.task('compass', function() {
