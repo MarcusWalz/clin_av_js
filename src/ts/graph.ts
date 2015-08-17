@@ -39,12 +39,13 @@ export class Edge {
 }
 
 export class Graph {
-  private name:string;
   private nodes:collections.Set<graph_node.GraphNode>;
   private edges:collections.Set<Edge>;
 
-  constructor(name: string, nodes:graph_node.GraphNode[] = []) {
-    this.name  = name;
+
+  constructor(public name:string, nodes = []) {
+
+
     this.edges = new collections.Set<Edge>();
     this.nodes = new collections.Set<graph_node.GraphNode>(
         (gn) => { return gn.getName(); } );

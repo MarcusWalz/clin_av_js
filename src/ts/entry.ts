@@ -24,7 +24,7 @@ function showGraph(g : graph.Graph ) {
     .nodes(g.getNodes())
     .links(links)
     .charge(-3000)
-    .linkDistance(200)
+    .linkDistance(150)
     .on('tick', tick)
     .size([width,height])
     .start();

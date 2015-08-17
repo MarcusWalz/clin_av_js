@@ -1,3 +1,7 @@
+/// <requires "app.d.ts" />
+
+import d3 = require('d3');
+
 export class GraphNode {
   name : string;
   // should we delete rows when this value is missing
@@ -9,6 +13,8 @@ export class GraphNode {
   // the ordered data 
   // which value is missing in values array is missing
   private missingVal:number = null;
+
+  public donut;
 
   // the column stored as the index in the value array
   public ndata:number[];
@@ -36,6 +42,27 @@ export class GraphNode {
       ); 
     }
 
+   var pie = d3.layout.pie()
+    .sort(null);
+
+   var color = d3.scale.category20();
+
+   var arc = d3.svg.arc()
+    .innerRadius(50)
+    .outerRadius(60);
+
+    var arcs = pie(this.histogram()).map(arc);
+
+    this.donut = [];
+
+    for(var i = 0; i < this.values.length; i++) {
+      this.donut.push({name: this.values[i],
+                       arc: arcs[i],
+                       color: color(i)});
+    }
+
+    console.log(this.donut);
+      
   }
 
   getName() : string {
@@ -102,4 +129,5 @@ export class GraphNode {
     this.ndata.forEach( (i) => { base_hist[i]++; return true; });
 
     return base_hist;
+  }
 }
