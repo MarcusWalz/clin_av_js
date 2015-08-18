@@ -1,36 +1,30 @@
 /// <reference path="app.d.ts" /> 
 /// <reference path="graph_node.ts" /> 
 /// <reference path="cpt.ts" /> 
-define(["require", "exports", './cpt'], function (require, exports, cpt) {
+define(["require", "exports", 'cpt'], function (require, exports, cpt) {
     // eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
     var Edge = (function () {
-        function Edge(fr, to) {
-            if (fr === null || to === null) {
+        function Edge(source, target) {
+            this.source = source;
+            this.target = target;
+            if (source === null || target === null) {
                 throw new Error('Can not construct edge to null node');
             }
-            if (fr === to) {
+            if (source === target) {
                 throw new Error('Edge cannot connect a node onto itself');
             }
-            this._to = to;
-            this._fr = fr;
         }
-        Edge.prototype.fr = function () {
-            return this._fr;
-        };
-        Edge.prototype.to = function () {
-            return this._to;
-        };
         Edge.prototype.toString = function () {
-            return this._fr.getName() + '->' + this._to.getName();
+            return this.source.getName() + '->' + this.target.getName();
         };
         Edge.prototype.isEqual = function (a) {
-            return a.fr() === this._fr && a.to() === this._to;
+            return a.source === this.source && a.target === this.target;
         };
         Edge.prototype.isParentOf = function (child) {
-            return child === this._to;
+            return child === this.target;
         };
         Edge.prototype.isChildOf = function (parent) {
-            return parent === this._fr;
+            return parent === this.source;
         };
         return Edge;
     })();
@@ -49,7 +43,7 @@ define(["require", "exports", './cpt'], function (require, exports, cpt) {
             var g = new Graph(this.name);
             this.nodes.forEach(function (n) { g.addNode(n); return true; });
             this.edges.forEach(function (e) {
-                g.addEdge(e.fr(), e.to());
+                g.addEdge(e.source, e.target);
                 return true;
             });
             return g;
@@ -96,7 +90,7 @@ define(["require", "exports", './cpt'], function (require, exports, cpt) {
             var _this = this;
             if (this.nodes.remove(node)) {
                 this.edges.forEach(function (edge) {
-                    if (edge.to() === node || edge.fr() === node) {
+                    if (edge.target === node || edge.source === node) {
                         _this.edges.remove(edge);
                     }
                     return true;
@@ -120,7 +114,7 @@ define(["require", "exports", './cpt'], function (require, exports, cpt) {
             var out = [];
             this.edges.forEach(function (edge) {
                 if (edge.isParentOf(n)) {
-                    out.push(edge.to());
+                    out.push(edge.target);
                 }
                 return true;
             });
@@ -130,7 +124,7 @@ define(["require", "exports", './cpt'], function (require, exports, cpt) {
             var out = [];
             this.edges.forEach(function (edge) {
                 if (edge.isChildOf(n)) {
-                    out.push(edge.to());
+                    out.push(edge.target);
                 }
                 return true;
             });

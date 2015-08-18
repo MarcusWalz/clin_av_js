@@ -1,8 +1,11 @@
 require.config({
     paths: {
-        d3: '/clin_av_js/lib/d3',
-        papaparse: '/clin_av_js/lib/papaparse'
-    },
+        angular: '../lib/angular',
+        d3: '../lib/d3',
+        papaparse: '../lib/papaparse'
+    }, shim: {
+        'angular': { exports: 'angular' }
+    }
 });
 
 //# sourceMappingURL=config.js.map

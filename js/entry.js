@@ -15,7 +15,7 @@ define(["require", "exports", 'papaparse', 'd3', './graph_node', './graph'], fun
             .nodes(g.getNodes())
             .links(links)
             .charge(-3000)
-            .linkDistance(200)
+            .linkDistance(150)
             .on('tick', tick)
             .size([width, height])
             .start();
@@ -102,7 +102,7 @@ define(["require", "exports", 'papaparse', 'd3', './graph_node', './graph'], fun
         console.log(g.calculateCpt(nodes[3]));
         showGraph(g);
     }
-    papaparse.parse('./sample.tab', {
+    papaparse.parse('/sample.tab', {
         header: true,
         download: true,
         worker: false,

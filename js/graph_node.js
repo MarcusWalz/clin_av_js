@@ -1,4 +1,5 @@
-define(["require", "exports"], function (require, exports) {
+/// <requires "app.d.ts" />
+define(["require", "exports", 'd3'], function (require, exports, d3) {
     var GraphNode = (function () {
         function GraphNode(name, column) {
             // the ordered data 
@@ -19,6 +20,20 @@ define(["require", "exports"], function (require, exports) {
             if (this.values.length <= 1) {
                 throw new Error('Column ' + name + ' must have at least two differing values');
             }
+            var pie = d3.layout.pie()
+                .sort(null);
+            var color = d3.scale.category20();
+            var arc = d3.svg.arc()
+                .innerRadius(50)
+                .outerRadius(60);
+            var arcs = pie(this.histogram()).map(arc);
+            this.donut = [];
+            for (var i = 0; i < this.values.length; i++) {
+                this.donut.push({ name: this.values[i],
+                    arc: arcs[i],
+                    color: color(i) });
+            }
+            console.log(this.donut);
         }
         GraphNode.prototype.getName = function () {
             return this.name;
