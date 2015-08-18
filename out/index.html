@@ -6,37 +6,42 @@
 </head>
 <body>
   <section class="todoapp" ng-controller="todoCtrl">
-    <form class="todo-form" ng-submit="vm.addTodo()">
-      <input class="new-todo" placeholder="placeholder" ng-model="newTodo">
-    </form>
-  <li ng-repeat="todo in todos">
-      <input class="toggle" type="checkbox", ng-model="todo.done"> 
-      <label>{{todo.text}}</label>
-    </li>
-    <svg width="1000" height="1000" ng-click="alert(node)">
-      <line ng-repeat="edge in graph.getEdges()"
+    <svg ng-attr-width="{{vm.width}}" ng-attr-height="{{vm.height}}">
+      <defs>
+        <marker id="end" viewbox="0 -5 10 10" refX="10" refY="-1.5"
+                                                        markerHeight="6"
+                                                        markerWidth="6"
+          orient="auto"><path d="M0,-5L10,0L0,5"></path>
+        </marker>
+      </defs>
+      <path ng-repeat="edge in graph.getEdges()"
+        marker-end="url(#end)" 
         stroke-width="4"
         class="line"
-        ng-attr-x1="{{edge.source.x}}"
-        ng-attr-y1="{{edge.source.y}}"
-        ng-attr-x2="{{edge.target.x}}"
-        ng-attr-y2="{{edge.target.y}}">
-      </line>
+        ng-attr-d="{{vm.d(edge)}}">
+      </path>
 
       <g ng-repeat="node in graph.getNodes()"
           ng-attr-transform="{{ 
-            'translate(' + node.x + ',' + node.y + ')' }}"
-          ng-click="graph.deleteNode(node)">
+          'translate(' + node.x + ',' + node.y + ')' }}"
+          ng-mousedown="vm.mouseDown(node)"
+          ng-mouseup="vm.mouseUp(node)"
+          ng-click="vm.selectNode(node)">
         <g ng-repeat="p in node.donut"
            class="arc" >
-
           <path ng-attr-d="{{p.arc}}" ng-attr-fill="{{p.color}}"></path>
         </g>
-        <circle r="50" fill="#fff"></circle>
+      <circle r="50" 
+        ng-class="node === selectedNode ? 'selected' : 'node'"></circle>
+        <circle class="delete"
+          r="10"
+          cx="50"
+          cy="-50"
+          ng-click="vm.rmNode(node)">
+        </circle>
         <text text-anchor="middle">{{node.getName()}}</text>
       </g>
     </svg>
-  </span>
   </section>
   <script src="lib/collections.js"></script>
   <!--
@@ -47,4 +52,5 @@
   <script data-main="js/todomvc" src="lib/require.js"></script>
   <script src="js/config.js"></script>
 </body>
+a
 </html>

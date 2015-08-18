@@ -3,12 +3,25 @@ body {
   background: #EEE;
 }
 
+svg text::selection {
+  background: none;
+}
+
 .line, path.link {
   fill: none;
   stroke: #666;
   stroke-width: 3px;
 }
 
-circle {
+circle.node {
+  fill: #EEE;
+  opacity: 0.3;
+}
+
+circle.delete {
+  fill: red;
+}
+
+circle.selected {
   fill: #FFF;
 }
