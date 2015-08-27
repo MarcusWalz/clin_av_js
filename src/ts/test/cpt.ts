@@ -9,12 +9,11 @@ import graph_node  = require('../graph_node');
 import graph       = require('../graph');
 import cpt         = require('../cpt');
 
-// fuck node
-// eval(require('fs').readFileSync('../aux_scripts/all.js', 'utf8'));
-//console.log(collections);
-
 
 var expect = chai.expect;
+
+console.log("why am I here!!!");
+console.trace();
 
 
 describe('CPT', () => {
@@ -26,35 +25,29 @@ describe('CPT', () => {
   var gn2 = new graph_node.GraphNode('N2', col2);
   var gn3 = new graph_node.GraphNode('N3', col3);
 
-  console.log(new cpt.CPT(gn1, [gn2, gn3]));
-  console.log(new cpt.CPT(gn1, [gn2, gn3]).conditionTable());
-
-  it('Should work without parents'), (done) => {
-
-  });
-  it('should work with only 1 condition', (done) => {
-    var c = new cpt.CPT(gn1, [gn2]);
-    done();
-  });
+  // console.log(new cpt.CPT(gn1, [gn2, gn3]).conditionTable());
 
   it('sum of counts should be eq. number of data points', (done) => {
-    var c = new cpt.CPT(gn1, [gn2, gn3]); 
+    var table = new cpt.CPT(gn1, [gn2, gn3]).getTable(); 
 
-    var flat = [];
-    flat = flat.concat.apply([], c.counts);
-    var entries = flat.reduce( (a, b) => { return a + b; } );
-    expect(entries).to.be.equal(gn1.length());
-    done();
+    var counts = 0; 
+    table.rows.forEach( (row) => 
+        row.counts.forEach((c2) => counts=counts + c2) );
 
-  });
+    console.log("Counts: " + counts);
 
-  it('index and unindex should be inverses', (done) => {
-    var c = new cpt.CPT(gn1, [gn2, gn3]); 
-    for (var i = 0; i < 6; i++) {
-      expect(c.index(c.unindex(i))).to.equal(i);
-    }
+    expect(counts).to.be.equal(5);
     done();
   });
+
+  it('should have a [] conditon if no parents',
+      (done) => 
+  { var table = new cpt.CPT(gn1).getTable(); 
+    expect(table.header.conditions).to.be.empty;
+    expect(table.rows[0].conditions).to.be.empty;
+    done();
+  });
+
   it('should output the lookup table');
   it('should have an addition opperation');
   it('should be divided by an integer');

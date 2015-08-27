@@ -24,9 +24,9 @@
       <g ng-repeat="node in graph.getNodes()"
           ng-attr-transform="{{ 
           'translate(' + node.x + ',' + node.y + ')' }}"
-          ng-mousedown="vm.mouseDown(node)"
-          ng-mouseup="vm.mouseUp(node)"
-          ng-click="vm.selectNode(node)">
+          ng-mousedown="vm.mouseDown(node, $event)"
+          ng-mouseup="vm.mouseUp(node, $event)"
+          ng-click="vm.selectNode(node, $event)">
         <g ng-repeat="p in node.donut"
            class="arc" >
           <path ng-attr-d="{{p.arc}}" ng-attr-fill="{{p.color}}"></path>
@@ -42,6 +42,12 @@
         <text text-anchor="middle">{{node.getName()}}</text>
       </g>
     </svg>
+    <div>
+      <button ng-click="vm.genAvatars()">Create</button> <input ng-model="num_avatars"></input>     Avatars
+    </div>
+
+    <a href="#" ng-click="vm.showBNM()">Pimp Shit Out</a>
+
   </section>
   <script src="lib/collections.js"></script>
   <!--

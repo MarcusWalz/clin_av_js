@@ -50,7 +50,7 @@ gulp.task('compile-ts', function () {
                            target: 'ES5',
                            module: 'AMD',
                            declarationFiles: false,
-                           noExternalResolve: true
+                           noExternalResolve: false
                        }));
 
         tsResult.dts.pipe(gulp.dest('out/js'));

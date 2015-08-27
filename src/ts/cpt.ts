@@ -3,50 +3,94 @@
 
 import graph_node = require('graph_node');
 
-export class CPT implements ICPT {
+interface ICPTRow {
+  conditions: string[];
+  counts: number[];
+}
 
-  private conditions:number; 
-  private offsets:number[];
-  public  counts:number[][];
-  private node:graph_node.GraphNode;
-  private parents:graph_node.GraphNode[];
+interface ICPTHeader {
+  conditions: string[];
+  values: string[];
+}
+
+export interface ICPT {
+  header: ICPTHeader;
+  rows:   ICPTRow[];
+}
+
+
+export class CPT implements ICPT {
+  public header:ICPTHeader;
+  public rows:ICPTRow[] = [];
+
+  private offsets: number[];
 
   // build a conditional prob table
-  constructor( node : graph_node.GraphNode
-             , parents: graph_node.GraphNode[]) {
-    this.node = node;
-    this.parents = parents;
-    this.offsets = this.calc_offsets();
-    // number of conditions = product of value lengths
-    this.conditions = parents.map( (p) => { 
-      return p.getValues().length; }).reduce( (a, b) => { 
-        return a * b; }, 1);
-    this.counts = new Array(this.conditions);
-    
-    var base_arr = new Array(node.getValues().length); 
+  constructor( private node : graph_node.GraphNode
+             , private parents: graph_node.GraphNode[] = []
+             , sample: number[] = null) {
 
-    for (var i = 0; i < base_arr.length; i++) {
-      base_arr[i] = 0; 
+    if(parents.length == 0) {
+      this.header = { conditions: [],  values: node.getValues()  }
+      this.rows   = [{ conditions: [], counts: node.histogram().map((x) => x/node.length() ) }]
+    } else {
+
+
+      this.offsets = this.calc_offsets();
+
+      // number of conditions = product of value lengths
+      var conditions = parents.map( (p) => { 
+        return p.getValues().length; }).reduce( (a, b) => { 
+          return a * b; }, 1);
+      var counts = new Array(conditions);
+      
+      var base_arr = new Array(node.getValues().length); 
+
+      for (var i = 0; i < base_arr.length; i++) {
+        base_arr[i] = 0; 
+      }
+
+      for (var i = 0; i < counts.length; i++) {
+        counts[i] = base_arr.slice(); // copy
+      }
+
+
+      this.header = { conditions: parents.map((n) => n.getName()),
+                      values: node.getValues()
+                    };
+
+      for (var i = 0; i < this.node.ndata.length; i++) {
+        var index = this.index(
+          this.parents.map((p) => { return p.ndata[i]; })
+        );
+
+        if(sample) {
+          counts[index][node.ndata[i]] + sample[i];
+        } else {
+          counts[index][node.ndata[i]]++;
+        }
+      }
+
+      var cond_table = this.conditionTable(conditions);
+
+      var norm_counts = (counts : number[]) : number[] => {
+        var sum = counts.reduce( (a,b) => a + b, 0);
+        return counts.map( (x) => x / sum );
+      }
+
+      for(var i = 0; i < conditions; i++) {
+        this.rows.push({ conditions: cond_table[i],
+                         counts: norm_counts(counts[i])});
+      }
     }
+  }
 
-    for (var i = 0; i < this.counts.length; i++) {
-      this.counts[i] = base_arr.slice(); // copy
-    }
-
-
-    for (var i = 0; i < this.node.ndata.length; i++) {
-      var index = this.index(
-        this.parents.map((p) => { return p.ndata[i]; })
-      );
-
-      this.counts[index][node.ndata[i]]++;
-    }
-
+  getTable() : ICPT {
+    return { header: this.header, rows: this.rows };
   }
 
   // contstruct array for lookup function
-  private calc_offsets ( ) : number[] {
-    var t  
+  private calc_offsets( ) : number[] {
     var offset = new Array(this.parents.length);
     for (var i = 0 ; i < this.parents.length; i++) {
       offset[i] = 1;
@@ -58,7 +102,7 @@ export class CPT implements ICPT {
   }
 
   // find the index by taking cross-product of valuess and offset arrays
-  index(values: number[]) : number {
+  private index(values: number[]) : number {
     var num:number = 0;
 
     for (var i = 0; i < this.parents.length; i++) {
@@ -69,7 +113,7 @@ export class CPT implements ICPT {
   }
 
   // inverse of index
-  unindex(id: number) : number[] {
+  private unindex(id: number) : number[] {
     var values:number[] = [];
 
     for (var i = 0; i < this.parents.length; i++) {
@@ -80,10 +124,10 @@ export class CPT implements ICPT {
     return values;
   }
 
-  conditionTable() : string[][] {
+  private conditionTable(numConditions) : string[][] {
     var table = [];
 
-    for (var i = 0; i < this.conditions; i++) {
+    for (var i = 0; i < numConditions; i++) {
       var indexes = this.unindex(i);
       var row = [];
       for (var j = 0; j < indexes.length; j++) {
@@ -94,6 +138,4 @@ export class CPT implements ICPT {
 
     return table;
   }
-
-
 }

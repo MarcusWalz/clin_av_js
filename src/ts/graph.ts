@@ -1,9 +1,9 @@
-/// <reference path="app.d.ts" /> 
-/// <reference path="graph_node.ts" /> 
-/// <reference path="cpt.ts" /> 
+/// <reference path="./app.d.ts" /> 
+/// <reference path="./graph_node.ts" /> 
+/// <reference path="./cpt.ts" /> 
 
-import graph_node   = require('graph_node');
-import cpt          = require('cpt');
+import graph_node   = require('./graph_node');
+import cpt          = require('./cpt');
 
 // eval(require('fs').readFileSync('../aux_scripts/collections.js', 'utf8'));
 
@@ -134,19 +134,27 @@ export class Graph {
     return this.edges.contains(this.makeEdge(fr, to));
   }
 
-  calculateCpt(node: graph_node.GraphNode) : cpt.CPT {
-    return new cpt.CPT(node, this.getParents(node));
-  }
-
-
   getParents(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
-    this.edges.forEach((edge) => {
-      if (edge.isParentOf(n)) { out.push(edge.target); }
+    this.edges.forEach( (edge) => {
+      if (edge.isParentOf(n)) { out.push(edge.source); }
       return true;
     });
+    console.log("here2");
     return out;
   }
+
+  calculateCpt(node: graph_node.GraphNode) : cpt.ICPT {
+    console.log(node);
+    console.log("getting parents for " + node.getName());
+    console.log(this.getParents);
+    var parents = this.getParents(node);
+    console.log("made it!");
+    console.log(cpt);
+    return new cpt.CPT(node, parents);
+  }
+
+
 
   getChildren(n : graph_node.GraphNode) : graph_node.GraphNode[] {
     var out = [];
